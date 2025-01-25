@@ -10,9 +10,11 @@ def space_recommender(people_count, using_phone, using_laptop):
     LIKE_CONF = "This situation is 'like a Conference.'"
     LIKE_CONV = "This situation is 'like a Conversation.'"
     LIKE_SOLITUDE = "This situation is 'like a need for solitude.'"
+    LIKE_TALK = "This situation is 'like a Conversation.'"
     OFFICE_RECO = "RECOMMENDATION: Use an OFFICE."
     PHONE_RECO = "RECOMMENDATION: Use a PHONE ROOM."
     SERENITY_RECO = "RECOMMENDATION: Use the Serenity Room - IYKYK."
+    CONVERSATION_RECO = "RECOMMENDATION: Use the Conversation Room - Let's Talk."
 
     SEPARATOR = "----------------------------------------------------------"
 
@@ -31,8 +33,12 @@ def space_recommender(people_count, using_phone, using_laptop):
             like_a_situation = LIKE_CONV
             recommendation = PHONE_RECO
         else:
-            like_a_situation = LIKE_SOLITUDE
-            recommendation = SERENITY_RECO
+            if people_count == 1:
+                like_a_situation = LIKE_SOLITUDE
+                recommendation = SERENITY_RECO
+            else:  # people_count == 2
+                like_a_situation = LIKE_TALK
+                recommendation = CONVERSATION_RECO
 
     # Build the output
     output_lines.append(f"<br>{SEPARATOR}")
