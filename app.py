@@ -98,13 +98,14 @@ HTML_FORM = """
             color: #5A67D8;
         }
 
-        form {
+        form, .result-container {
             background: #ffffff;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
             max-width: 400px;
             width: 100%;
+            transition: opacity 0.5s ease;
         }
 
         label {
@@ -141,68 +142,108 @@ HTML_FORM = """
             background: #434190;
         }
 
-        hr {
-            margin: 20px 0;
-            border: none;
-            border-top: 1px solid #ccc;
+        .result-container {
+            display: none;
+            opacity: 0;
+        }
+
+        .visible {
+            display: block;
+            opacity: 1;
+        }
+
+        .beach-ball {
+            width: 50px;
+            height: 50px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: conic-gradient(#ff6347, #ffa07a, #87cefa, #4682b4, #ff6347);
+            animation: spin 2s linear infinite;
+            cursor: pointer;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @media (max-width: 600px) {
-            form {
+            form, .result-container {
                 padding: 15px;
-            }
-        }
-
-        .result {
-            background: #e6f7ff;
-            padding: 15px;
-            border: 1px solid #b3e5fc;
-            border-radius: 5px;
-            margin-top: 20px;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
             }
         }
     </style>
 </head>
 <body>
     <h1>Space Recommender</h1>
-    <p>Enter details below:</p>
-    <form method="POST">
+    <form id="inputForm" method="POST">
         <label for="people_count">Number of People:</label>
-        <input type="number" name="people_count" value="1" min="1" required><br>
+        <input type="number" name="people_count" value="1" min="1" required>
 
         <label for="using_phone">Phone/Web Call Usage?</label>
         <select name="using_phone">
             <option value="no">No</option>
             <option value="yes">Yes</option>
-        </select><br>
+        </select>
 
         <label for="using_laptop">Laptop Usage?</label>
         <select name="using_laptop">
             <option value="no">No</option>
             <option value="yes">Yes</option>
-        </select><br>
+        </select>
 
         <input type="submit" value="Submit">
     </form>
 
-    {% if result %}
-    <div class="result">
+    <div class="result-container" id="resultContainer">
         <h2>Result:</h2>
-        <p>{{ result|safe }}</p>
+        <p id="resultContent"></p>
+        <div class="beach-ball" id="resetButton"></div>
     </div>
-    {% endif %}
+
+    <script>
+        const form = document.getElementById('inputForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultContent = document.getElementById('resultContent');
+        const resetButton = document.getElementById('resetButton');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Fade out the form
+            form.style.opacity = '0';
+            setTimeout(() => {
+                form.style.display = 'none';
+                // Update the result content and fade in the result box
+                const formData = new FormData(form);
+                fetch('/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    resultContent.innerHTML = data.split('<body>')[1].split('</body>')[0]; // Get the result content from the response
+                    resultContainer.classList.add('visible');
+                });
+            }, 500);
+        });
+
+        resetButton.addEventListener('click', function() {
+            // Reset form and result display
+            resultContainer.classList.remove('visible');
+            setTimeout(() => {
+                form.style.display = 'block';
+                form.style.opacity = '1';
+            }, 500);
+        });
+    </script>
 </body>
 </html>
-"""
+
 
 
 @app.route('/', methods=['GET', 'POST'])
