@@ -14,7 +14,7 @@ def space_recommender(people_count, using_phone, using_laptop):
     OFFICE_RECO = "RECOMMENDATION: Use an OFFICE."
     PHONE_RECO = "RECOMMENDATION: Use a PHONE ROOM."
     SERENITY_RECO = "RECOMMENDATION: Use the Serenity Room - IYKYK."
-    CONVERSATION_RECO = "RECOMMENDATION: Use the Conversation Room - Let's Talk."
+    CONVERSATION_RECO = "RECOMMENDATION: Use the Phone Room - Let's Talk."
 
     SEPARATOR = "----------------------------------------------------------"
 
