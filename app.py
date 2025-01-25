@@ -156,7 +156,7 @@ HTML_FORM = """
             height: 50px;
             margin: 20px auto;
             border-radius: 50%;
-            background: conic-gradient(#4A4A4A, #7F7F7F, #4A4A4A);
+            background: conic-gradient(#ff6347, #ffa07a, #87cefa, #4682b4, #ff6347); /* Original Colorful Gradient */
             animation: spin 2s linear infinite;
             cursor: pointer;
             border: 2px solid #ccc;
