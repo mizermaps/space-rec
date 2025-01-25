@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, jsonify
 
 app = Flask(__name__)
 
@@ -86,18 +86,18 @@ HTML_FORM = """
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: #f4f4f9;
             color: #333;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
         }
 
         h1 {
             color: #5A67D8;
+            text-align: center;
         }
 
         form, .result-container {
@@ -138,6 +138,7 @@ HTML_FORM = """
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
+            width: 100%;
         }
 
         input[type="submit"]:hover {
@@ -147,6 +148,8 @@ HTML_FORM = """
         .result-container {
             display: none;
             opacity: 0;
+            margin-top: 20px;
+            text-align: center;
         }
 
         .visible {
@@ -178,22 +181,36 @@ HTML_FORM = """
                 padding: 15px;
             }
         }
+
+        /* Loader styles */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #5A67D8;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
     </style>
 </head>
 <body>
     <h1>Space Recommender</h1>
-    <form id="inputForm" method="POST">
+    <form id="inputForm">
         <label for="people_count">Number of People:</label>
         <input type="number" name="people_count" value="1" min="1" required>
 
         <label for="using_phone">Phone/Web Call Usage?</label>
-        <select name="using_phone">
+        <select name="using_phone" required>
+            <option value="" disabled selected>Select an option</option>
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select>
 
         <label for="using_laptop">Laptop Usage?</label>
-        <select name="using_laptop">
+        <select name="using_laptop" required>
+            <option value="" disabled selected>Select an option</option>
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select>
@@ -203,9 +220,9 @@ HTML_FORM = """
 
     <div class="result-container" id="resultContainer">
         <h2>Result:</h2>
-        <p id="resultContent"></p>
+        <div id="resultContent"></div>
         <!-- Spinning beach ball for reset -->
-        <div class="beach-ball" id="resetButton"></div>
+        <div class="beach-ball" id="resetButton" title="Start Over"></div>
     </div>
 
     <script>
@@ -219,44 +236,70 @@ HTML_FORM = """
 
             // Fade out the form
             form.style.opacity = '0';
+            form.style.pointerEvents = 'none'; // Disable form during submission
 
-            setTimeout(() => {
+            // Optionally, show a loader
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            form.appendChild(loader);
+
+            // Collect form data
+            const formData = new FormData(form);
+
+            // Send POST request via fetch
+            fetch('/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Remove loader
+                form.removeChild(loader);
+
+                // Hide the form
                 form.style.display = 'none';
 
-                // Collect form data
-                const formData = new FormData(form);
+                // Populate the result content
+                resultContent.innerHTML = data.result;
 
-                // POST to the same route
-                fetch('/', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(data => {
-                    // The returned data is the full HTML page.
-                    // We extract everything inside <body>...</body> 
-                    // and place it in the result container.
-                    const bodyContent = data.split('<body>')[1].split('</body>')[0];
-                    resultContent.innerHTML = bodyContent;
-                    resultContainer.classList.add('visible');
-                })
-                .catch(error => {
-                    resultContent.innerHTML = "<p>Error: " + error + "</p>";
-                    resultContainer.classList.add('visible');
-                });
+                // Fade in the result container
+                resultContainer.classList.add('visible');
+            })
+            .catch(error => {
+                // Remove loader
+                form.removeChild(loader);
 
-            }, 500);
+                // Re-enable form
+                form.style.opacity = '1';
+                form.style.pointerEvents = 'auto';
+
+                // Display error message
+                alert('An error occurred: ' + error.message);
+            });
         });
 
         resetButton.addEventListener('click', function() {
-            // Remove the 'visible' class so it fades out
+            // Hide the result container
             resultContainer.classList.remove('visible');
 
-            // After the fade out animation, show the form again
-            setTimeout(() => {
-                form.style.display = 'block';
-                form.style.opacity = '1';
-            }, 500);
+            // Clear the result content
+            resultContent.innerHTML = '';
+
+            // Reset and show the form
+            form.style.display = 'block';
+            form.style.opacity = '1';
+            form.style.pointerEvents = 'auto';
+
+            // Reset form fields
+            form.reset();
         });
     </script>
 </body>
@@ -267,12 +310,13 @@ HTML_FORM = """
 def index():
     """
     On GET: Display the form.
-    On POST: Run the recommender logic and return the full HTML (which includes the result).
-    The JS front-end code will extract <body>...</body> content and place it in the result container.
+    On POST: If AJAX, return JSON with the result.
+             Else, render the full page with the result.
     """
-    result = None
-
     if request.method == 'POST':
+        # Check if it's an AJAX request
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
         # 1) Grab inputs from the form
         people_count = request.form.get('people_count', '1')
         using_phone = request.form.get('using_phone', 'no')
@@ -289,10 +333,15 @@ def index():
         # 2) Run the space recommender logic
         result = space_recommender(people_count, phone_bool, laptop_bool)
 
-    # Render the form (and the result if it exists)
-    # The JS fetch call relies on returning the ENTIRE HTML for parsing.
-    # Therefore, we pass 'result' to the template, which includes it in the body.
-    return render_template_string(HTML_FORM, result=result)
+        if is_ajax:
+            # Return JSON response for AJAX
+            return jsonify({'result': result})
+        else:
+            # Non-AJAX POST, render the full page
+            return render_template_string(HTML_FORM, result=result)
+
+    # GET request, render the form
+    return render_template_string(HTML_FORM)
 
 # ----------------------------------------------------
 # Entry point for local development and Render
