@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, render_template_string
 
 app = Flask(__name__)
@@ -75,176 +76,40 @@ def space_recommender(people_count, using_phone, using_laptop):
 # ----------------------------------------------------
 HTML_FORM = """
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Recommender</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        h1 {
-            color: #5A67D8;
-        }
-
-        form, .result-container {
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            max-width: 400px;
-            width: 100%;
-            transition: opacity 0.5s ease;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        input[type="number"], select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="number"]:focus, select:focus {
-            border-color: #5A67D8;
-            outline: none;
-        }
-
-        input[type="submit"] {
-            background: #5A67D8;
-            color: #ffffff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background: #434190;
-        }
-
-        .result-container {
-            display: none;
-            opacity: 0;
-        }
-
-        .visible {
-            display: block;
-            opacity: 1;
-        }
-
-        .beach-ball {
-            width: 50px;
-            height: 50px;
-            margin: 20px auto;
-            border-radius: 50%;
-            background: conic-gradient(#ff6347, #ffa07a, #87cefa, #4682b4, #ff6347);
-            animation: spin 2s linear infinite;
-            cursor: pointer;
-        }
-
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 600px) {
-            form, .result-container {
-                padding: 15px;
-            }
-        }
-    </style>
 </head>
 <body>
     <h1>Space Recommender</h1>
-    <form id="inputForm" method="POST">
+    <p>Enter details below:</p>
+    <form method="POST">
         <label for="people_count">Number of People:</label>
-        <input type="number" name="people_count" value="1" min="1" required>
+        <input type="number" name="people_count" value="1" min="1" required><br><br>
 
         <label for="using_phone">Phone/Web Call Usage?</label>
         <select name="using_phone">
             <option value="no">No</option>
             <option value="yes">Yes</option>
-        </select>
+        </select><br><br>
 
         <label for="using_laptop">Laptop Usage?</label>
         <select name="using_laptop">
             <option value="no">No</option>
             <option value="yes">Yes</option>
-        </select>
+        </select><br><br>
 
         <input type="submit" value="Submit">
     </form>
 
-    <div class="result-container" id="resultContainer">
-        <h2>Result:</h2>
-        <p id="resultContent"></p>
-        <div class="beach-ball" id="resetButton"></div>
-    </div>
-
-    <script>
-        const form = document.getElementById('inputForm');
-        const resultContainer = document.getElementById('resultContainer');
-        const resultContent = document.getElementById('resultContent');
-        const resetButton = document.getElementById('resetButton');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // Fade out the form
-            form.style.opacity = '0';
-            setTimeout(() => {
-                form.style.display = 'none';
-                // Update the result content and fade in the result box
-                const formData = new FormData(form);
-                fetch('/', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(data => {
-                    resultContent.innerHTML = data.split('<body>')[1].split('</body>')[0]; // Get the result content from the response
-                    resultContainer.classList.add('visible');
-                });
-            }, 500);
-        });
-
-        resetButton.addEventListener('click', function() {
-            // Reset form and result display
-            resultContainer.classList.remove('visible');
-            setTimeout(() => {
-                form.style.display = 'block';
-                form.style.opacity = '1';
-            }, 500);
-        });
-    </script>
+    {% if result %}
+    <hr>
+    <h2>Result:</h2>
+    <p>{{ result|safe }}</p>
+    {% endif %}
 </body>
 </html>
-
-
+"""
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -270,9 +135,11 @@ def index():
     # Render the form, optionally with the result
     return render_template_string(HTML_FORM, result=result)
 
+
 # ----------------------------------------------------
-# For local development use only:
+# Entry point for local development and Render:
 # ----------------------------------------------------
 if __name__ == '__main__':
-    # Access at http://127.0.0.1:5000
-    app.run(debug=True)
+    # Render uses PORT env variable; default to 5000 locally
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
