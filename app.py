@@ -18,17 +18,9 @@ def space_recommender(people_count, using_phone, using_laptop):
     EXPL_12_BOTH = "Reason: 1–2 people + phone + laptop => Definitely Office."
     EXPL_12_NONE = "Reason: 1–2 people, no phone, no laptop => a more casual discussion fits a Phone Room."
 
-    SUMMARY_TEXT = """Thank you for using the Space Recommender!<br><br>
-    Summary of Logic:<br>
-    • If 3+ people => 'like a conference' => Use an OFFICE.<br>
-    • If only 1 or 2 people:<br>
-       - If phone OR laptop => OFFICE<br>
-       - Else => PHONE ROOM<br>
-    """
-
     SEPARATOR = "----------------------------------------------------------"
 
-    # We'll accumulate our output in a list, then join into one string
+    # Accumulate output in a list, then join into one string
     output_lines = []
 
     # MAIN DECISION LOGIC
@@ -63,10 +55,6 @@ def space_recommender(people_count, using_phone, using_laptop):
             output_lines.append(EXPL_12_NONE)
             output_lines.append(SEPARATOR)
 
-    # Append summary text
-    output_lines.append("")
-    output_lines.append(SUMMARY_TEXT)
-
     # Convert to a single HTML-formatted string
     return "<br>".join(output_lines)
 
@@ -87,7 +75,7 @@ HTML_FORM = """
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f9;
+            background-color: #e0e0e0; /* Light gray background */
             color: #333;
             display: flex;
             flex-direction: column;
@@ -96,8 +84,9 @@ HTML_FORM = """
         }
 
         h1 {
-            color: #5A67D8;
+            color: #4A4A4A; /* Space Gray */
             text-align: center;
+            margin-bottom: 20px;
         }
 
         form, .result-container {
@@ -114,6 +103,7 @@ HTML_FORM = """
             display: block;
             margin-bottom: 10px;
             font-weight: bold;
+            color: #4A4A4A; /* Space Gray */
         }
 
         input[type="number"], select {
@@ -123,15 +113,18 @@ HTML_FORM = """
             border: 1px solid #ccc;
             border-radius: 5px;
             transition: border-color 0.3s;
+            background-color: #f9f9f9;
+            color: #333;
         }
 
         input[type="number"]:focus, select:focus {
-            border-color: #5A67D8;
+            border-color: #4A4A4A; /* Space Gray */
             outline: none;
+            background-color: #fff;
         }
 
         input[type="submit"] {
-            background: #5A67D8;
+            background: #4A4A4A; /* Space Gray */
             color: #ffffff;
             padding: 10px 15px;
             border: none;
@@ -139,10 +132,11 @@ HTML_FORM = """
             cursor: pointer;
             transition: background 0.3s;
             width: 100%;
+            font-size: 16px;
         }
 
         input[type="submit"]:hover {
-            background: #434190;
+            background: #333333; /* Darker Space Gray */
         }
 
         .result-container {
@@ -162,9 +156,10 @@ HTML_FORM = """
             height: 50px;
             margin: 20px auto;
             border-radius: 50%;
-            background: conic-gradient(#ff6347, #ffa07a, #87cefa, #4682b4, #ff6347);
+            background: conic-gradient(#4A4A4A, #7F7F7F, #4A4A4A);
             animation: spin 2s linear infinite;
             cursor: pointer;
+            border: 2px solid #ccc;
         }
 
         @keyframes spin {
@@ -185,7 +180,7 @@ HTML_FORM = """
         /* Loader styles */
         .loader {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #5A67D8;
+            border-top: 4px solid #4A4A4A; /* Space Gray */
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -238,7 +233,7 @@ HTML_FORM = """
             form.style.opacity = '0';
             form.style.pointerEvents = 'none'; // Disable form during submission
 
-            // Optionally, show a loader
+            // Show a loader
             const loader = document.createElement('div');
             loader.className = 'loader';
             form.appendChild(loader);
