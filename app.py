@@ -9,14 +9,10 @@ app = Flask(__name__)
 def space_recommender(people_count, using_phone, using_laptop):
     LIKE_CONF = "This situation is 'like a Conference.'"
     LIKE_CONV = "This situation is 'like a Conversation.'"
+    LIKE_SOLITUDE = "This situation is 'like a need for solitude.'"
     OFFICE_RECO = "RECOMMENDATION: Use an OFFICE."
     PHONE_RECO = "RECOMMENDATION: Use a PHONE ROOM."
     SERENITY_RECO = "RECOMMENDATION: Use the Serenity Room - IYKYK."
-
-    EXPL_3PLUS = "Reason: With 3+ people, you need a larger, more formal space."
-    EXPL_12_LAPTOP = "Reason: 1–2 people + laptop usage => Office."
-    EXPL_12_PHONE = "Reason: 1–2 people + phone usage => Phone Room."
-    EXPL_12_SERENITY = "Reason: 1–2 people, no phone, no laptop => Serenity Room - IYKYK."
 
     SEPARATOR = "----------------------------------------------------------"
 
@@ -25,36 +21,25 @@ def space_recommender(people_count, using_phone, using_laptop):
 
     # MAIN DECISION LOGIC
     if people_count >= 3:
-        output_lines.append(f"<br>{SEPARATOR}")
-        output_lines.append(LIKE_CONF)
-        output_lines.append(SEPARATOR)
-        output_lines.append(OFFICE_RECO)
-        output_lines.append(EXPL_3PLUS)
-        output_lines.append(SEPARATOR)
+        like_a_situation = LIKE_CONF
+        recommendation = OFFICE_RECO
     else:
-        # 1 or 2 people
         if using_laptop:
-            output_lines.append(f"<br>{SEPARATOR}")
-            output_lines.append(LIKE_CONF)
-            output_lines.append(SEPARATOR)
-            output_lines.append(OFFICE_RECO)
-            output_lines.append(EXPL_12_LAPTOP)
-            output_lines.append(SEPARATOR)
+            like_a_situation = LIKE_CONF
+            recommendation = OFFICE_RECO
         elif using_phone:
-            output_lines.append(f"<br>{SEPARATOR}")
-            output_lines.append(LIKE_CONV)
-            output_lines.append(SEPARATOR)
-            output_lines.append(PHONE_RECO)
-            output_lines.append(EXPL_12_PHONE)
-            output_lines.append(SEPARATOR)
+            like_a_situation = LIKE_CONV
+            recommendation = PHONE_RECO
         else:
-            # No phone, no laptop => Serenity Room
-            output_lines.append(f"<br>{SEPARATOR}")
-            output_lines.append(LIKE_CONV)
-            output_lines.append(SEPARATOR)
-            output_lines.append(SERENITY_RECO)
-            output_lines.append(EXPL_12_SERENITY)
-            output_lines.append(SEPARATOR)
+            like_a_situation = LIKE_SOLITUDE
+            recommendation = SERENITY_RECO
+
+    # Build the output
+    output_lines.append(f"<br>{SEPARATOR}")
+    output_lines.append(like_a_situation)
+    output_lines.append(SEPARATOR)
+    output_lines.append(recommendation)
+    output_lines.append(SEPARATOR)
 
     # Convert to a single HTML-formatted string
     return "<br>".join(output_lines)
