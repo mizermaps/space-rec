@@ -75,40 +75,135 @@ def space_recommender(people_count, using_phone, using_laptop):
 # ----------------------------------------------------
 HTML_FORM = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Recommender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #5A67D8;
+        }
+
+        form {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: #5A67D8;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background: #5A67D8;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background: #434190;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                padding: 15px;
+            }
+        }
+
+        .result {
+            background: #e6f7ff;
+            padding: 15px;
+            border: 1px solid #b3e5fc;
+            border-radius: 5px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>Space Recommender</h1>
     <p>Enter details below:</p>
     <form method="POST">
         <label for="people_count">Number of People:</label>
-        <input type="number" name="people_count" value="1" min="1" required><br><br>
+        <input type="number" name="people_count" value="1" min="1" required><br>
 
         <label for="using_phone">Phone/Web Call Usage?</label>
         <select name="using_phone">
             <option value="no">No</option>
             <option value="yes">Yes</option>
-        </select><br><br>
+        </select><br>
 
         <label for="using_laptop">Laptop Usage?</label>
         <select name="using_laptop">
             <option value="no">No</option>
             <option value="yes">Yes</option>
-        </select><br><br>
+        </select><br>
 
         <input type="submit" value="Submit">
     </form>
 
     {% if result %}
-    <hr>
-    <h2>Result:</h2>
-    <p>{{ result|safe }}</p>
+    <div class="result">
+        <h2>Result:</h2>
+        <p>{{ result|safe }}</p>
+    </div>
     {% endif %}
 </body>
 </html>
 """
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
