@@ -8,13 +8,13 @@ app = Flask(__name__)
 # ----------------------------------------------------
 def space_recommender(people_count, using_phone, using_laptop):
     LIKE_CONF = "This situation is 'like focused work or a conference.'"
-    LIKE_CONV = "This situation is 'like a conversation.'"
+    LIKE_CONV = "This situation is 'like a conversation with privacy.'"
     LIKE_SOLITUDE = "This situation is 'like a need for solitude.'"
-    LIKE_TALK = "This situation is 'like a conversation.'"
+    LIKE_TALK = "This situation is 'like a quick discussion with privacy.'"
     OFFICE_RECO = "RECOMMENDATION: Use an Office or Meeting Room - Let's get stuff done!."
-    PHONE_RECO = "RECOMMENDATION: Use a Phone Room. - You might just need a minute..."
+    PHONE_RECO = "RECOMMENDATION: Tuck into a Phone Room. - You might just need a minute..."
     SERENITY_RECO = "RECOMMENDATION: Try the Serenity Room - It's not quite a nap."
-    CONVERSATION_RECO = "RECOMMENDATION: Use the Phone Room - Let's talk."
+    CONVERSATION_RECO = "RECOMMENDATION: Grab a Phone Room - Let's talk."
 
     # Accumulate output in a list, then join into one string
     output_lines = []
