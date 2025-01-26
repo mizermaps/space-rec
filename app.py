@@ -7,16 +7,14 @@ app = Flask(__name__)
 # Corrected space recommender logic
 # ----------------------------------------------------
 def space_recommender(people_count, using_phone, using_laptop):
-    LIKE_CONF = "This situation is 'like a Conference.'"
-    LIKE_CONV = "This situation is 'like a Conversation.'"
+    LIKE_CONF = "This situation is 'like a conference or focused work.'"
+    LIKE_CONV = "This situation is 'like a conversation.'"
     LIKE_SOLITUDE = "This situation is 'like a need for solitude.'"
-    LIKE_TALK = "This situation is 'like a Conversation.'"
-    OFFICE_RECO = "RECOMMENDATION: Use an OFFICE."
-    PHONE_RECO = "RECOMMENDATION: Use a PHONE ROOM."
-    SERENITY_RECO = "RECOMMENDATION: Use the Serenity Room - IYKYK."
+    LIKE_TALK = "This situation is 'like a conversation.'"
+    OFFICE_RECO = "RECOMMENDATION: Use an Office or Meeting Room."
+    PHONE_RECO = "RECOMMENDATION: Use a Phone Room."
+    SERENITY_RECO = "RECOMMENDATION: Try the Serenity Room (IYKYK)."
     CONVERSATION_RECO = "RECOMMENDATION: Use the Phone Room - Let's Talk."
-
-    SEPARATOR = "----------------------------------------------------------"
 
     # Accumulate output in a list, then join into one string
     output_lines = []
@@ -40,12 +38,9 @@ def space_recommender(people_count, using_phone, using_laptop):
                 like_a_situation = LIKE_TALK
                 recommendation = CONVERSATION_RECO
 
-    # Build the output
-    output_lines.append(f"<br>{SEPARATOR}")
-    output_lines.append(like_a_situation)
-    output_lines.append(SEPARATOR)
-    output_lines.append(recommendation)
-    output_lines.append(SEPARATOR)
+    # Build the output with structured HTML
+    output_lines.append(f"<div class='result-situation'><strong>{like_a_situation}</strong></div>")
+    output_lines.append(f"<div class='result-recommendation'>{recommendation}</div>")
 
     # Convert to a single HTML-formatted string
     return "<br>".join(output_lines)
@@ -136,11 +131,27 @@ HTML_FORM = """
             opacity: 0;
             margin-top: 20px;
             text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f0f0f0; /* Slightly darker background for contrast */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .visible {
             display: block !important;
             opacity: 1 !important;
+        }
+
+        .result-situation {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #4A4A4A; /* Space Gray */
+        }
+
+        .result-recommendation {
+            font-size: 1em;
+            color: #333333; /* Darker Text */
+            margin-bottom: 20px;
         }
 
         .beach-ball {
