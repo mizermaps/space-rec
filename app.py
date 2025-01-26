@@ -7,14 +7,14 @@ app = Flask(__name__)
 # Corrected space recommender logic
 # ----------------------------------------------------
 def space_recommender(people_count, using_phone, using_laptop):
-    LIKE_CONF = "This situation is 'like a conference or focused work.'"
+    LIKE_CONF = "This situation is 'like focused work or a conference.'"
     LIKE_CONV = "This situation is 'like a conversation.'"
     LIKE_SOLITUDE = "This situation is 'like a need for solitude.'"
     LIKE_TALK = "This situation is 'like a conversation.'"
-    OFFICE_RECO = "RECOMMENDATION: Use an Office or Meeting Room."
-    PHONE_RECO = "RECOMMENDATION: Use a Phone Room."
-    SERENITY_RECO = "RECOMMENDATION: Try the Serenity Room (IYKYK)."
-    CONVERSATION_RECO = "RECOMMENDATION: Use the Phone Room - Let's Talk."
+    OFFICE_RECO = "RECOMMENDATION: Use an Office or Meeting Room - Let's get something done!."
+    PHONE_RECO = "RECOMMENDATION: Use a Phone Room. - You probably just need a minute..."
+    SERENITY_RECO = "RECOMMENDATION: Try the Serenity Room - It's great for this."
+    CONVERSATION_RECO = "RECOMMENDATION: Use the Phone Room - Let's talk."
 
     # Accumulate output in a list, then join into one string
     output_lines = []
