@@ -13,7 +13,7 @@ def space_recommender(people_count, using_phone, using_laptop):
     LIKE_TALK = "This situation is 'like a conversation.'"
     OFFICE_RECO = "RECOMMENDATION: Use an Office or Meeting Room - Let's get stuff done!."
     PHONE_RECO = "RECOMMENDATION: Use a Phone Room. - You might just need a minute..."
-    SERENITY_RECO = "RECOMMENDATION: Try the Serenity Room - It's great for this."
+    SERENITY_RECO = "RECOMMENDATION: Try the Serenity Room - It's not quite a nap."
     CONVERSATION_RECO = "RECOMMENDATION: Use the Phone Room - Let's talk."
 
     # Accumulate output in a list, then join into one string
