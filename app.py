@@ -94,7 +94,7 @@ HTML_FORM = """
         }
 
         input[type="number"], select {
-            width: 100%;
+            width: 95%;
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #ccc;
