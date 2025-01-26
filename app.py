@@ -11,7 +11,7 @@ def space_recommender(people_count, using_phone, using_laptop):
     LIKE_CONV = "This situation is 'like a conversation.'"
     LIKE_SOLITUDE = "This situation is 'like a need for solitude.'"
     LIKE_TALK = "This situation is 'like a conversation.'"
-    OFFICE_RECO = "RECOMMENDATION: Use an Office or Meeting Room - Let's get something done!."
+    OFFICE_RECO = "RECOMMENDATION: Use an Office or Meeting Room - Let's get stuff done!."
     PHONE_RECO = "RECOMMENDATION: Use a Phone Room. - You probably just need a minute..."
     SERENITY_RECO = "RECOMMENDATION: Try the Serenity Room - It's great for this."
     CONVERSATION_RECO = "RECOMMENDATION: Use the Phone Room - Let's talk."
