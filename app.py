@@ -194,7 +194,7 @@ HTML_FORM = """
     </style>
 </head>
 <body>
-    <h1>Space Recommender</h1>
+    <h1>Space Suggester</h1>
     <form id="inputForm">
         <label for="people_count">Number of People:</label>
         <input type="number" name="people_count" value="1" min="1" required>
